@@ -1,0 +1,19 @@
+# Env files
+.env
+.env.local
+
+# Binaries
+*.exe
+*.exe~
+
+# Go
+*/vendor/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# OS
+.DS_Store
+Thumbs.db
