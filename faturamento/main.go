@@ -17,10 +17,12 @@ func main() {
 	db.AutoMigrate(&models.Invoice{}, &models.InvoiceItem{})
 
 	invoiceHandler := handlers.NewInvoiceHandler(db)
+	summaryHandler := handlers.NewSummaryHandler(db)
 
 	r := gin.Default()
 	r.Use(cors.Default())
 
+	r.GET("/invoices/summary", summaryHandler.GenerateSummary)
 	r.GET("/invoices", invoiceHandler.List)
 	r.GET("/invoices/:id", invoiceHandler.Find)
 	r.POST("/invoices", invoiceHandler.Create)

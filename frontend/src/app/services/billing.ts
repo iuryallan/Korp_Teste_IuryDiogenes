@@ -50,4 +50,8 @@ export class BillingService {
   printInvoice(id: number) {
     return this.http.post<Invoice>(`${this.url}/invoices/${id}/print`, {});
   }
+
+  getSummary() {
+    return this.http.get<{ summary: string }>(`${this.url}/invoices/summary`);
+  }
 }

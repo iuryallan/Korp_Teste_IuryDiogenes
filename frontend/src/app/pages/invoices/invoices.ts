@@ -188,6 +188,80 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
         color: var(--text-muted);
         font-size: 14px;
       }
+      .summary-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 32px;
+      }
+      .summary-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .summary-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ai-badge {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: #a78bfa;
+        background: rgba(167, 139, 250, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.2);
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .summary-text {
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text);
+        white-space: pre-wrap;
+      }
+      .summary-empty {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-style: italic;
+      }
+      .btn-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        background: rgba(167, 139, 250, 0.08);
+        color: #a78bfa;
+        transition: all 0.15s;
+        &:hover:not(:disabled) {
+          background: rgba(167, 139, 250, 0.15);
+        }
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+      .spinner-sm {
+        width: 11px;
+        height: 11px;
+        border: 2px solid rgba(167, 139, 250, 0.2);
+        border-top-color: #a78bfa;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
     `,
   ],
   template: `
@@ -197,6 +271,23 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
         <p class="subtitle">Emissão e controle de notas</p>
       </div>
       <a class="btn btn-primary" routerLink="/invoices/new">+ Nova nota</a>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-header">
+        <div class="summary-title">
+          Resumo Executivo
+          <span class="ai-badge">✦ IA</span>
+        </div>
+        <button class="btn-summary" (click)="generateSummary()" [disabled]="loadingSummary">
+          <span *ngIf="loadingSummary" class="spinner-sm"></span>
+          {{ loadingSummary ? 'Gerando...' : '↻ Gerar resumo' }}
+        </button>
+      </div>
+      <p class="summary-text" *ngIf="summary">{{ summary }}</p>
+      <p class="summary-empty" *ngIf="!summary && !loadingSummary">
+        Clique em "Gerar resumo" para obter uma análise inteligente das notas fiscais.
+      </p>
     </div>
 
     <div class="table-card">
@@ -275,6 +366,8 @@ export class Invoices implements OnInit {
   invoices: Invoice[] = [];
   columns = ['number', 'status', 'items', 'actions'];
   printingId: number | null = null;
+  summary: string = '';
+  loadingSummary: boolean = false;
 
   constructor(
     private billingService: BillingService,
@@ -334,6 +427,22 @@ export class Invoices implements OnInit {
         this.snackBar.open(err.error?.error || 'Erro ao imprimir', 'Fechar', { duration: 4000 });
         this.printingId = null;
         this.cdr.detectChanges();
+      },
+    });
+  }
+
+  generateSummary() {
+    this.loadingSummary = true;
+    this.summary = '';
+    this.billingService.getSummary().subscribe({
+      next: (data) => {
+        this.summary = data.summary;
+        this.loadingSummary = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.snackBar.open('Erro ao gerar resumo', 'Fechar', { duration: 3000 });
+        this.loadingSummary = false;
       },
     });
   }

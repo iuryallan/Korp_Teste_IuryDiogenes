@@ -55,7 +55,7 @@ func fetchProduct(productID uint) (*ProductResponse, error) {
 	return &product, nil
 }
 
-func debitProduct(productID uint, quantity float64) error {
+func debitProduct(productID uint, quantity float64, invoiceID uint) error {
 	inventoryURL := os.Getenv("INVENTORY_SERVICE_URL")
 	if inventoryURL == "" {
 		inventoryURL = "http://localhost:8081"
@@ -64,14 +64,17 @@ func debitProduct(productID uint, quantity float64) error {
 	url := fmt.Sprintf("%s/products/%d/debit", inventoryURL, productID)
 	req, _ := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
+
+	req.Header.Set("Idempotency-Key", fmt.Sprintf("invoice-%d-product-%d", invoiceID, productID))
+
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
 		return fmt.Errorf("inventory service unavailable")
 	}
 	if resp.StatusCode != http.StatusOK {
-		var body map[string]string
-		json.NewDecoder(resp.Body).Decode(&body)
-		return fmt.Errorf(body["error"])
+		var respBody map[string]string
+		json.NewDecoder(resp.Body).Decode(&respBody)
+		return fmt.Errorf(respBody["error"])
 	}
 	return nil
 }
@@ -163,10 +166,8 @@ func (h *InvoiceHandler) Update(c *gin.Context) {
 		return
 	}
 
-	// Deleta itens antigos
 	h.DB.Where("invoice_id = ?", invoice.ID).Delete(&models.InvoiceItem{})
 
-	// Cria novos itens com snapshot
 	var items []models.InvoiceItem
 	for _, r := range req.Items {
 		product, err := fetchProduct(r.ProductID)
@@ -217,7 +218,7 @@ func (h *InvoiceHandler) Print(c *gin.Context) {
 	}
 
 	for _, item := range invoice.Items {
-		if err := debitProduct(item.ProductID, item.Quantity); err != nil {
+		if err := debitProduct(item.ProductID, item.Quantity, invoice.ID); err != nil {
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 			return
 		}
