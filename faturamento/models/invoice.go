@@ -11,7 +11,9 @@ type Invoice struct {
 
 type InvoiceItem struct {
 	gorm.Model
-	InvoiceID  uint    `json:"invoice_id"`
-	ProductID  uint    `json:"product_id"`
-	Quantity   float64 `json:"quantity"`
+	InvoiceID          uint    `json:"invoice_id"`
+	ProductID          uint    `json:"product_id"`
+	ProductCode        string  `json:"product_code"`
+	ProductDescription string  `json:"product_description"`
+	Quantity           float64 `json:"quantity"`
 }

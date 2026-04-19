@@ -88,3 +88,24 @@ func (h *ProductHandler) Debit(c *gin.Context) {
 	h.DB.Save(&product)
 	c.JSON(http.StatusOK, product)
 }
+
+type ReturnRequest struct {
+	Quantity float64 `json:"quantity"`
+}
+
+func (h *ProductHandler) Return(c *gin.Context) {
+	id := c.Param("id")
+	var product models.Product
+	if h.DB.First(&product, id).Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		return
+	}
+	var req ReturnRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	product.Balance += req.Quantity
+	h.DB.Save(&product)
+	c.JSON(http.StatusOK, product)
+}

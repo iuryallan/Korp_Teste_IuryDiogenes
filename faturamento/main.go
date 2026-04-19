@@ -24,6 +24,8 @@ func main() {
 	r.GET("/invoices", invoiceHandler.List)
 	r.GET("/invoices/:id", invoiceHandler.Find)
 	r.POST("/invoices", invoiceHandler.Create)
+	r.PUT("/invoices/:id", invoiceHandler.Update)
+	r.DELETE("/invoices/:id", invoiceHandler.Delete)
 	r.POST("/invoices/:id/print", invoiceHandler.Print)
 
 	port := os.Getenv("PORT")

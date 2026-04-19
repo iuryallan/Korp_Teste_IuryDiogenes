@@ -119,13 +119,13 @@ import { InventoryService, Product } from '../../services/inventory';
         table-layout: fixed;
       }
       col.col-desc {
-        width: 60%;
+        width: 50%;
       }
       col.col-code {
-        width: 20%;
+        width: 25%;
       }
       col.col-bal {
-        width: 20%;
+        width: 25%;
       }
       .balance-cell {
         font-family: 'DM Mono', monospace;

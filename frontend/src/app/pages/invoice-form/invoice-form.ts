@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BillingService, InvoiceItem } from '../../services/billing';
+import { BillingService, InvoiceItemRequest } from '../../services/billing';
 import { InventoryService, Product } from '../../services/inventory';
 
 @Component({
@@ -42,6 +42,7 @@ import { InventoryService, Product } from '../../services/inventory';
         border-radius: 12px;
         padding: 24px;
         max-width: 620px;
+        margin: 0 auto;
       }
       .card-title {
         font-size: 13px;
@@ -140,8 +141,10 @@ import { InventoryService, Product } from '../../services/inventory';
   ],
   template: `
     <div class="page-header">
-      <h1>Nova Nota Fiscal</h1>
-      <p class="subtitle">Adicione produtos e salve a nota</p>
+      <h1>{{ editId ? 'Editar Nota #' + invoiceNumber : 'Nova Nota Fiscal' }}</h1>
+      <p class="subtitle">
+        {{ editId ? 'Atualize os produtos da nota' : 'Adicione produtos e salve a nota' }}
+      </p>
     </div>
 
     <div class="card">
@@ -176,7 +179,7 @@ import { InventoryService, Product } from '../../services/inventory';
 
       <div class="actions">
         <button class="btn btn-primary" (click)="save()" [disabled]="loading">
-          {{ loading ? 'Salvando...' : 'Salvar nota' }}
+          {{ loading ? 'Salvando...' : editId ? 'Salvar alterações' : 'Salvar nota' }}
         </button>
         <a class="btn btn-ghost" routerLink="/invoices">Cancelar</a>
       </div>
@@ -185,24 +188,47 @@ import { InventoryService, Product } from '../../services/inventory';
 })
 export class InvoiceForm implements OnInit {
   products: Product[] = [];
-  items: InvoiceItem[] = [{ product_id: 0, quantity: 1 }];
+  items: InvoiceItemRequest[] = [{ product_id: 0, quantity: 1 }];
   loading = false;
+  editId: number | null = null;
+  invoiceNumber: number = 0;
 
   constructor(
     private billingService: BillingService,
     private inventoryService: InventoryService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
+    // Verifica se é edição ou criação
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.editId = +id;
+      this.loadInvoice(this.editId);
+    }
     this.inventoryService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
         this.cdr.detectChanges();
       },
       error: () => this.snackBar.open('Erro ao carregar produtos', 'Fechar', { duration: 3000 }),
+    });
+  }
+
+  loadInvoice(id: number) {
+    this.billingService.getInvoice(id).subscribe({
+      next: (invoice) => {
+        this.invoiceNumber = invoice.number;
+        this.items = invoice.items.map((i) => ({
+          product_id: i.product_id,
+          quantity: i.quantity,
+        }));
+        this.cdr.detectChanges();
+      },
+      error: () => this.snackBar.open('Erro ao carregar nota', 'Fechar', { duration: 3000 }),
     });
   }
 
@@ -228,13 +254,19 @@ export class InvoiceForm implements OnInit {
       return;
     }
     this.loading = true;
-    this.billingService.createInvoice(this.items).subscribe({
+    const request$ = this.editId
+      ? this.billingService.updateInvoice(this.editId, this.items)
+      : this.billingService.createInvoice(this.items);
+
+    request$.subscribe({
       next: () => {
-        this.snackBar.open('Nota criada com sucesso!', 'Fechar', { duration: 3000 });
+        this.snackBar.open(this.editId ? 'Nota atualizada!' : 'Nota criada!', 'Fechar', {
+          duration: 3000,
+        });
         this.router.navigate(['/invoices']);
       },
       error: () => {
-        this.snackBar.open('Erro ao criar nota', 'Fechar', { duration: 3000 });
+        this.snackBar.open('Erro ao salvar nota', 'Fechar', { duration: 3000 });
         this.loading = false;
       },
     });

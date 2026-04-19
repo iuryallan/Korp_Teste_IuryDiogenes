@@ -13,7 +13,11 @@
   --warning: #f59e0b;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   font-family: 'DM Sans', sans-serif;
@@ -45,7 +49,9 @@ body {
   background: transparent !important;
   border-bottom: 1px solid var(--border) !important;
   transition: background 0.15s;
-  &:hover { background: var(--surface) !important; }
+  &:hover {
+    background: var(--surface) !important;
+  }
 }
 
 .mat-mdc-header-cell {
@@ -77,12 +83,14 @@ body {
   min-height: unset !important;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type=number] { -moz-appearance: textfield; }
+input[type='number'] {
+  -moz-appearance: textfield;
+}
 
 .mat-mdc-select-panel {
   background: var(--surface-2) !important;
@@ -90,10 +98,16 @@ input[type=number] { -moz-appearance: textfield; }
 .mat-mdc-option {
   background: var(--surface-2) !important;
   color: var(--text) !important;
-  &:hover, &.mat-mdc-option-active {
+  &:hover,
+  &.mat-mdc-option-active {
     background: var(--border) !important;
   }
 }
 .mat-mdc-select-value-text {
   color: var(--text) !important;
+}
+
+.dark-dialog .mat-mdc-dialog-container {
+  background: transparent !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
 }
