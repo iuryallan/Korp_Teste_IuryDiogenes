@@ -24,6 +24,7 @@ Projeto técnico desenvolvido para o processo seletivo da Korp ERP (by Viasoft).
 
 O sistema é composto por dois microsserviços independentes e um frontend Angular: 
 
+```bash
         [Angular :4200]
           ↓          ↓
 [Estoque :8081]   [Faturamento :8082]
@@ -33,6 +34,7 @@ O sistema é composto por dois microsserviços independentes e um frontend Angul
 O Faturamento também chama o Estoque diretamente na impressão:
 
 [Faturamento :8082] → [Estoque :8081]
+```
 
 - **Serviço de Estoque** — gerencia produtos e saldos
 - **Serviço de Faturamento** — gerencia notas fiscais e se comunica com o estoque na impressão
