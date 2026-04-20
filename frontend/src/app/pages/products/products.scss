@@ -11,7 +11,6 @@ h1 {
   color: var(--text-muted);
   margin-top: 4px;
 }
-
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -94,14 +93,17 @@ table {
   width: 100%;
   table-layout: fixed;
 }
-col.col-desc {
-  width: 50%;
-}
 col.col-code {
   width: 25%;
 }
+col.col-desc {
+  width: 45%;
+}
 col.col-bal {
-  width: 25%;
+  width: 20%;
+}
+col.col-action {
+  width: 20%;
 }
 .balance-cell {
   font-family: 'DM Mono', monospace;
@@ -113,4 +115,61 @@ col.col-bal {
   padding: 48px;
   color: var(--text-muted);
   font-size: 14px;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  transition: all 0.15s;
+  &:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(16, 185, 129, 0.06);
+  }
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+.icon-btn-confirm {
+  border-color: var(--accent);
+  color: var(--accent);
+  &:hover {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+.icon-btn-cancel {
+  &:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.06);
+  }
+}
+.restock-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.restock-input {
+  width: 64px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  &:focus {
+    border-color: var(--accent);
+  }
 }

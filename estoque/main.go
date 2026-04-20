@@ -26,7 +26,7 @@ func main() {
 	r.POST("/products", productHandler.Create)
 	r.PUT("/products/:id", productHandler.Update)
 	r.PUT("/products/:id/debit", productHandler.Debit)
-	r.PUT("/products/:id/return", productHandler.Return)
+	r.PUT("/products/:id/restock", productHandler.Restock)
 
 	port := os.Getenv("PORT")
 	if port == "" {

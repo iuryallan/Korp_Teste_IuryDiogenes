@@ -16,4 +16,8 @@ export class InventoryService {
   createProduct(data: Omit<Product, 'ID'>) {
     return this.http.post<Product>(`${this.url}/products`, data);
   }
+
+  restockProduct(id: number, quantity: number) {
+    return this.http.put(`${this.url}/products/${id}/restock`, { quantity });
+  }
 }

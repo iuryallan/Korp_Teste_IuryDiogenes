@@ -22,12 +22,15 @@ import { Product } from '../../models/product.model';
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
-
 export class Products implements OnInit {
   products: Product[] = [];
-  columns = ['description', 'code', 'balance'];
+  columns = ['code', 'description', 'balance', 'actions'];
   form = { code: '', description: '', balance: 0 };
   loading = false;
+
+  restockingId: number | null = null;
+  restockQuantity: number = 1;
+  restockLoading = false;
 
   constructor(
     private inventoryService: InventoryService,
@@ -65,6 +68,38 @@ export class Products implements OnInit {
       error: () => {
         this.snackBar.open('Erro ao cadastrar', 'Fechar', { duration: 3000 });
         this.loading = false;
+      },
+    });
+  }
+
+  startRestock(product: Product) {
+    this.restockingId = product.ID;
+    this.restockQuantity = 1;
+  }
+
+  cancelRestock() {
+    this.restockingId = null;
+    this.restockQuantity = 1;
+  }
+
+  confirmRestock(product: Product) {
+    if (this.restockQuantity <= 0) {
+      this.snackBar.open('Quantidade inválida', 'Fechar', { duration: 3000 });
+      return;
+    }
+    this.restockLoading = true;
+    this.inventoryService.restockProduct(product.ID, this.restockQuantity).subscribe({
+      next: () => {
+        this.snackBar.open(`Estoque de "${product.description}" reposto!`, 'Fechar', {
+          duration: 3000,
+        });
+        this.restockingId = null;
+        this.restockLoading = false;
+        this.loadProducts();
+      },
+      error: () => {
+        this.snackBar.open('Erro ao repor estoque', 'Fechar', { duration: 3000 });
+        this.restockLoading = false;
       },
     });
   }

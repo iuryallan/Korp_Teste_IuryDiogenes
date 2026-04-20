@@ -124,7 +124,7 @@ type ReturnRequest struct {
 	Quantity float64 `json:"quantity"`
 }
 
-func (h *ProductHandler) Return(c *gin.Context) {
+func (h *ProductHandler) Restock(c *gin.Context) {
 	id := c.Param("id")
 
 	var result struct {
