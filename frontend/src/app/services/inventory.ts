@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-
-export interface Product {
-  ID: number;
-  code: string;
-  description: string;
-  balance: number;
-}
+import { Product } from '../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {

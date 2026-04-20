@@ -1,1 +1,44 @@
-<p>invoice-form works!</p>
+<div class="page-header">
+  <h1>{{ editId ? 'Editar Nota #' + invoiceNumber : 'Nova Nota Fiscal' }}</h1>
+  <p class="subtitle">
+    {{ editId ? 'Atualize os produtos da nota' : 'Adicione produtos e salve a nota' }}
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-title">Itens da nota</div>
+
+  <div class="item-row" *ngFor="let item of items; let i = index">
+    <mat-form-field appearance="outline">
+      <mat-label>Produto</mat-label>
+      <mat-select [(ngModel)]="item.product_id">
+        <mat-option *ngFor="let p of products" [value]="p.ID">
+          {{ p.code }} — {{ p.description }} (saldo: {{ p.balance }})
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.opacity]="!item.product_id ? '0.4' : '1'">
+      <mat-label>Qtd</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="item.quantity"
+        min="1"
+        [max]="getBalance(item.product_id)"
+        [disabled]="!item.product_id"
+      />
+    </mat-form-field>
+    <button class="remove-btn" (click)="removeItem(i)">×</button>
+  </div>
+
+  <button class="btn btn-add" (click)="addItem()">+ Adicionar produto</button>
+
+  <div class="divider"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" (click)="save()" [disabled]="loading">
+      {{ loading ? 'Salvando...' : editId ? 'Salvar alterações' : 'Salvar nota' }}
+    </button>
+    <a class="btn btn-ghost" routerLink="/invoices">Cancelar</a>
+  </div>
+</div>

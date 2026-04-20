@@ -1,0 +1,113 @@
+.page-header {
+  margin-bottom: 32px;
+}
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.item-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 36px;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+mat-form-field {
+  width: 100%;
+}
+.remove-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  position: relative;
+  top: 8px;
+  line-height: 1;
+  &:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.06);
+  }
+}
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  &:hover {
+    background: var(--accent-dim);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  &:hover {
+    color: var(--text);
+  }
+}
+.btn-add {
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed rgba(16, 185, 129, 0.4);
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 20px;
+  &:hover {
+    background: rgba(16, 185, 129, 0.06);
+  }
+}
