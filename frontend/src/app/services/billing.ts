@@ -1,25 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-
-export interface InvoiceItem {
-  product_id: number;
-  product_code: string;
-  product_description: string;
-  quantity: number;
-}
-
-export interface Invoice {
-  ID: number;
-  number: number;
-  status: string;
-  items: InvoiceItem[];
-}
-
-export interface InvoiceItemRequest {
-  product_id: number;
-  quantity: number;
-}
+import { Invoice, InvoiceItemRequest } from '../models/invoice.model';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {

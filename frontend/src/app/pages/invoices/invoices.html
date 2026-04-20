@@ -1,1 +1,95 @@
-<p>invoices works!</p>
+<div class="page-header">
+  <div>
+    <h1>Notas Fiscais</h1>
+    <p class="subtitle">Emissão e controle de notas</p>
+  </div>
+  <a class="btn btn-primary" routerLink="/invoices/new">+ Nova nota</a>
+</div>
+
+<div class="summary-card">
+  <div class="summary-header">
+    <div class="summary-title">
+      Resumo Executivo
+      <span class="ai-badge">✦ IA</span>
+    </div>
+    <button class="btn-summary" (click)="generateSummary()" [disabled]="loadingSummary">
+      <span *ngIf="loadingSummary" class="spinner-sm"></span>
+      {{ loadingSummary ? 'Gerando...' : '↻ Gerar resumo' }}
+    </button>
+  </div>
+  <p class="summary-text" *ngIf="summary">{{ summary }}</p>
+  <p class="summary-empty" *ngIf="!summary && !loadingSummary">
+    Clique em "Gerar resumo" para obter uma análise inteligente das notas fiscais.
+  </p>
+</div>
+
+<div class="table-card">
+  <div class="table-header">
+    <span class="table-title">Notas</span>
+  </div>
+  <div *ngIf="invoices.length === 0" class="empty">Nenhuma nota emitida ainda.</div>
+  <table mat-table [dataSource]="invoices" *ngIf="invoices.length > 0">
+    <colgroup>
+      <col class="col-num" />
+      <col class="col-status" />
+      <col class="col-items" />
+      <col class="col-action" />
+    </colgroup>
+
+    <ng-container matColumnDef="number">
+      <th mat-header-cell *matHeaderCellDef>Nº</th>
+      <td mat-cell *matCellDef="let n" class="num-cell">#{{ n.number }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let n">
+        <span [class]="n.status === 'Open' ? 'badge badge-open' : 'badge badge-closed'">
+          <span [class]="n.status === 'Open' ? 'dot dot-open' : 'dot dot-closed'"></span>
+          {{ n.status === 'Open' ? 'Aberta' : 'Fechada' }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="items">
+      <th mat-header-cell *matHeaderCellDef>Produtos</th>
+      <td mat-cell *matCellDef="let n">
+        <div class="items-list">
+          <span class="item-line" *ngFor="let item of n.items">
+            <span class="item-name">{{ item.product_description }}</span>
+            · {{ item.quantity }}x
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let n">
+        <div class="action-cell">
+          <button
+            class="icon-btn"
+            [disabled]="n.status !== 'Open' || printingId === n.ID"
+            (click)="print(n)"
+          >
+            <span *ngIf="printingId === n.ID" class="spinner"></span>
+            {{ printingId === n.ID ? 'Imprimindo...' : '↓ Imprimir' }}
+          </button>
+          <button class="icon-btn" [disabled]="n.status !== 'Open'" (click)="edit(n)">
+            ✎ Editar
+          </button>
+          <button
+            class="icon-btn icon-btn-danger"
+            [disabled]="n.status !== 'Open'"
+            (click)="confirmDelete(n)"
+          >
+            ✕ Excluir
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+  </table>
+</div>
